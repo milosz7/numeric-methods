@@ -68,8 +68,81 @@ def conjugate_gradient(A, b):
         p = r_next + beta * p
         r = r_next
 
+
+# version of the algorithm considering the matrix structure
+def gauss_seidel_optim(A, b):
+    x0 = np.zeros(N, dtype="float32")
+    norms = []
+    for k in range(iterations):
+        x_old = x0.copy()
+        for i in range(N):
+            sigma = 0.0
+            if i < N-4:
+                sigma += A[i, i+4] * x0[i+4]
+            if i < N-1:
+                sigma += A[i, i+1] * x0[i+1]
+            if i > 0:
+                sigma += A[i, i-1] * x0[i-1]
+            if i > 3:
+                sigma += A[i, i-4] * x0[i-4]
+            x0[i] = (b[i] - sigma) / A[i, i]
+        norm = np.linalg.norm(np.abs(x0 - x_old))
+        norms.append(norm)
+        
+        if norm < precision:
+            norms = np.array(norms)
+            norms_closeup = norms[norms < 1e-5]
+            ks = np.arange(k+1)
+            ks_closeup = np.arange(len(norms) - len(norms_closeup), k+1)
+            ks_closeup = ks_closeup.reshape(len(ks_closeup))
+            return x0, norms, ks, norms_closeup, ks_closeup
+
+
+# version of the algorithm considering the matrix structure 
+def conjugate_gradient_optim(A, b):
+    x0 = np.zeros(N, dtype="float32")
+    norms = []
+    r = b.copy()
+    p  = r.copy()
+    for k in range(iterations):
+        Ap = np.zeros(N)
+        for i in range(N):
+            Ap[i] = A[i, i] * p[i]
+            if i < N-4:
+                Ap[i] += A[i, i+4] * p[i+4]
+            if i < N-1:
+                Ap[i] += A[i,i+1] * p[i+1]
+            if i > 0:
+                Ap[i] += A[i, i-1] * p[i-1]
+            if i > 3:
+                Ap[i] += A[i, i-4] * p[i-4]
+        alpha = np.dot(r, r) / np.dot(p, Ap)
+        x0 = x0 + alpha * p
+        r_next = r - alpha * Ap
+        norm = np.linalg.norm(r_next)
+        norms.append(norm)
+
+        if norm < precision:
+            norms = np.array(norms)
+            norms_closeup = norms[norms < 1e-5]
+            ks = np.arange(k+1)
+            ks_closeup = np.arange(len(norms) - len(norms_closeup), k+1)
+            ks_closeup = ks_closeup.reshape(len(ks_closeup))
+            return x0, norms, ks, norms_closeup, ks_closeup
+
+        beta = np.dot(r_next, r_next) / np.dot(r,r)
+        p = r_next + beta * p
+        r = r_next
+import time
+t0 = time.time()
 sol1, norms1, ks1, norms_closeup1, ks_closeup1 = gauss_seidel(A, A_constants)
 sol2, norms2, ks2, norms_closeup2, ks_closeup2 = conjugate_gradient(A, A_constants)
+
+print("unoptimised:", time.time() - t0)
+t0 = time.time()
+sol1, norms1, ks1, norms_closeup1, ks_closeup1 = gauss_seidel_optim(A, A_constants)
+sol2, norms2, ks2, norms_closeup2, ks_closeup2 = conjugate_gradient_optim(A, A_constants)
+print("optimised:", time.time() - t0)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 ax1.set_title("Gauss-Seidel vs Conjguate gradient norm convergence", fontdict={'fontsize': 10})
