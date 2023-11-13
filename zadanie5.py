@@ -1,6 +1,6 @@
 import numpy as np
 
-# np.set_printoptions(suppress=True, precision=3,linewidth=150)
+np.set_printoptions(suppress=True, precision=3,linewidth=150)
 A = np.array([
     [0, 1, 0, 0],
     [1, 0, 0, 0],
@@ -60,6 +60,12 @@ for i in range(len(unique_eigenvalues)):
     eigenvector_idx = np.argmax(evals_H == current_eval)
     # take its corresponding vector
     eigenvectors_C[:, i] = eigenvectors_HC[:, eigenvector_idx]
+
+# orthogonality check
+for i in range(N):
+    for j in range(N):
+        if i != j:
+            print(np.vdot(eigenvectors_C[:, i], eigenvectors_C[:, j]))
 
 print("My solution")
 print(unique_eigenvalues)
