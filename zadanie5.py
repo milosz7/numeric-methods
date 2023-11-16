@@ -1,6 +1,6 @@
 import numpy as np
 
-np.set_printoptions(suppress=True, precision=3,linewidth=150)
+np.set_printoptions(suppress=True, linewidth=150)
 A = np.array([
     [0, 1, 0, 0],
     [1, 0, 0, 0],
@@ -24,13 +24,15 @@ C = np.array([
 
 H = np.block([[A, -B], [B, A]])
 
+print(H)
+
 def qr_francis(A, num_iterations=100000, tol=1e-5, shift=1e-1):
     n = A.shape[0]
     eigenvectors = np.eye(n)
     Ac = A.copy()
+    shift_matrix = shift * np.eye(n) 
 
     for _ in range(num_iterations):
-        shift_matrix = shift * np.eye(n) 
         Q, R = np.linalg.qr(Ac - shift_matrix)
         Ac = R @ Q + shift_matrix
         eigenvectors = eigenvectors @ Q
@@ -42,6 +44,7 @@ def qr_francis(A, num_iterations=100000, tol=1e-5, shift=1e-1):
     return eigenvalues, eigenvectors
 
 evals_H, evecs_H = qr_francis((H))
+print(evals_H, evecs_H)
 
 # cast for indexing
 N = int(H.shape[0] / 2)
