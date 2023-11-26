@@ -6,7 +6,7 @@ def evaluate_node(x):
     return 1.0 / (1 + 5 * x**2)
 
 
-def lagrange_interpolate(x, nodes, node_values, coef_precision=1e-8):
+def lagrange_interpolate(nodes, node_values, coef_precision=1e-8):
     x = sym.Symbol('x')
     fx = 0.0
     n = nodes.shape[0]
@@ -31,7 +31,7 @@ x_end = max(nodes)
 step = 0.01
 
 
-f_x = lagrange_interpolate(1.0, nodes, node_values)
+f_x = lagrange_interpolate(nodes, node_values)
 print("Interpolated polynomial", f_x)
 
 
@@ -40,6 +40,10 @@ ys = np.array([f_x.eval(x) for x in xs], dtype="float64")
 x_ticks_step = abs(nodes[0]) - abs(nodes[1])
 plt.scatter(nodes, node_values, c="r")
 plt.xticks(np.arange(x_start, x_end + x_ticks_step, x_ticks_step))
+plt.xlabel("x")
+plt.ylabel("f(x)")
 plt.plot(xs, ys)
 plt.grid("both")
+plt.title("Lagrange interpolation results")
+plt.savefig("lagrange_interpolation.png", dpi=400)
 plt.show()
