@@ -7,7 +7,6 @@ plt.rcParams.update({
     "text.usetex": True
 })
 
-
 def find_limit(tolerance=1e-8):
     x = 0
     while (math.exp(-(x**2)) > tolerance):
