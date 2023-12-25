@@ -57,8 +57,6 @@ for i in range(0, N-2):
 bs = np.array(bs)
 xis[1:N-1] = thomas_solve(A, bs)
 
-print(A)
-print(xis)
 xs = []
 ys = []
 for i in range(N-1):
@@ -69,6 +67,6 @@ for i in range(N-1):
 
 plt.title("Cubic spline for range [-1.5, 1.5]")
 plt.plot(xs, ys, label="cubic spline")
-# plt.scatter(nodes, values, c="r", s=0.5, label="points used for interpolation")
+plt.scatter(nodes, values, c="r", s=0.5, label="points used for interpolation")
 plt.legend()
 plt.show()
