@@ -86,10 +86,10 @@ def brent_iteration(f, a, b, c, f_a, f_b, f_c):
     return  a, b, c, d, f_a, f_b, f_c, b_old
 
 
-def brent_method(f, a, b, tolerance=1e-6, max_iterations=10000):
+def brent_method(f, a, c, tolerance=1e-6, max_iterations=10000):
     intervals = []
     iterations = 0
-    c = (a + b) / 2
+    b = (a + c) / 2
     f_a, f_b, f_c = f_x(a), f_x(b), f_x(c)
     
     while True:
