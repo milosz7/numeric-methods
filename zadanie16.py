@@ -75,14 +75,15 @@ def swap_brent(f, a, b, c, d, f_a, f_b, f_c):
     return a, b, c, d, f_a, f_b, f_c
 
 
-def brent_iteration(f, a, b, c, f_a, f_b, f_c):
+def brent_iteration(f, a, b, c, f_a, f_b, f_c, a_c_old):
     d = 1/2 * ((a**2 * (f_c - f_b)) + b**2 * (f_a - f_c) + c**2 * (f_b - f_a)) / \
         (a * (f_c - f_b) + b * (f_a - f_c) + c * (f_b - f_a))
     b_old = b
-    if not (a < d and d < c):
-        d = (a + c) / 2
-
     a, b, c, d, f_a, f_b, f_c = swap_brent(f, a, b, c, d, f_a, f_b, f_c)
+    if not (a < d and d < c) or abs(a-c) >= a_c_old / 2:
+        d = (a + c) / 2
+        a, b, c, d, f_a, f_b, f_c = swap_brent(f, a, b, c, d, f_a, f_b, f_c)
+    
     return  a, b, c, d, f_a, f_b, f_c, b_old
 
 
@@ -93,7 +94,8 @@ def brent_method(f, a, c, tolerance=1e-6, max_iterations=10000):
     f_a, f_b, f_c = f_x(a), f_x(b), f_x(c)
     
     while True:
-        a, b, c, d, f_a, f_b, f_c, b_old = brent_iteration(f, a, b, c, f_a, f_b, f_c)
+        a_c_old = abs(c - a)
+        a, b, c, d, f_a, f_b, f_c, b_old = brent_iteration(f, a, b, c, f_a, f_b, f_c, a_c_old)
         a_c = abs(c - a)
         intervals.append(a_c)
         iterations += 1
